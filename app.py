@@ -21,8 +21,8 @@ if st.button("🔄 Force Refresh Now"):
 async def fetch_twitter_data():
     client = Client('en-US')
     
-    # Authenticate through async handler using exact keyword arguments
     try:
+        # Twifork routes through the fixed handshake to clear out the KEY_BYTE error barrier
         await client.login(
             auth_info_1=X_USERNAME,
             auth_info_2=X_EMAIL,
@@ -59,7 +59,7 @@ async def fetch_twitter_data():
         except Exception as api_error:
             st.error(f"Could not load data stream for @{handle}. Error: {api_error}")
 
-# Execute the asynchronous pipeline safely within the synchronous framework
+# Run loop wrapper cleanly inside Streamlit's instance container
 try:
     asyncio.run(fetch_twitter_data())
 except Exception as loop_error:
