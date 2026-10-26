@@ -28,30 +28,36 @@ async def fetch_twitter_data():
 
     three_days_ago = datetime.now(timezone.utc) - timedelta(days=3)
 
-    for handle in HANDLES:
-        st.write(f"### @{handle}")
-        try:
-            user = await client.get_user_by_screen_name(handle)
-            tweets = await user.get_tweets('Tweets', count=20)
+    # Automatically split the browser screen width into 3 even columns side-by-side
+    cols = st.columns(len(HANDLES))
+
+    for i, handle in enumerate(HANDLES):
+        # Direct the content generation stream into its specific horizontal layout column node
+        with cols[i]:
+            st.markdown(f"### [@{handle}](https://x.com{handle})")
+            st.markdown("---")
             
-            valid_tweets_found = False
-            
-            for tweet in tweets:
-                tweet_time = tweet.created_at_datetime
+            try:
+                user = await client.get_user_by_screen_name(handle)
+                tweets = await user.get_tweets('Tweets', count=20)
                 
-                if tweet_time >= three_days_ago:
-                    valid_tweets_found = True
-                    with st.container():
-                        formatted_time = tweet_time.strftime("%b %d, %Y · %I:%M %p UTC")
-                        st.markdown(f"**Posted at:** {formatted_time}")
-                        st.write(tweet.text)
-                        st.markdown("---")
-                        
-            if not valid_tweets_found:
-                st.info(f"No messages posted by @{handle} within the last 3 days.")
+                valid_tweets_found = False
                 
-        except Exception as api_error:
-            st.error(f"Could not load data stream for @{handle}. Error Details: {api_error}")
+                for tweet in tweets:
+                    tweet_time = tweet.created_at_datetime
+                    
+                    if tweet_time >= three_days_ago:
+                        valid_tweets_found = True
+                        with st.container(border=True): # Wraps each message post block cleanly
+                            formatted_time = tweet_time.strftime("%b %d, %Y · %I:%M %p UTC")
+                            st.caption(f"📅 {formatted_time}")
+                            st.write(tweet.text)
+                            
+                if not valid_tweets_found:
+                    st.info(f"No messages posted by @{handle} within the last 3 days.")
+                    
+            except Exception as api_error:
+                st.error(f"Could not load data stream for @{handle}. Error Details: {api_error}")
 
 # Run loop wrapper inside Streamlit's instance container
 try:
