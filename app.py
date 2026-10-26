@@ -6,9 +6,9 @@ from datetime import datetime, timedelta, timezone
 HANDLES = ["MenchOsint", "A7_Mirza", "Suriyakmaps"]
 
 # Backend Dummy Account Login Credentials (The script logs in silently)
-X_USERNAME = "YOUR_DUMMY_X_USERNAME"
-X_EMAIL = "YOUR_DUMMY_X_EMAIL"
-X_PASSWORD = "YOUR_DUMMY_X_PASSWORD"
+X_USERNAME = "herberdagoat11"
+X_EMAIL = "herbergabe@gmail.com"
+X_PASSWORD = "GABEHERBERGFF(12"
 
 st.set_page_config(page_title="Live Feed Dashboard", layout="wide")
 st.title("🔴 Live Account Streams")
