@@ -12,7 +12,7 @@ CT0 = "7d90a0ba62e49984b64248b1a4daeef3ef91aa819b67085ae552ac0a0d8aa82533a745ac2
 
 st.set_page_config(page_title="Live Feed Dashboard", layout="wide")
 st.title("🔴 Live Account Streams")
-st.subheader("Free monitoring (Last 3 days)")
+st.subheader("Free monitoring (Last 3 days with Media)")
 
 if st.button("🔄 Force Refresh Now"):
     st.rerun()
@@ -51,7 +51,7 @@ async def fetch_twitter_data():
                             formatted_time = tweet_time.strftime("%b %d, %Y · %I:%M %p UTC")
                             st.caption(f"📅 {formatted_time}")
                             
-                            # FIX: Use 'full_text' instead of '.text' to capture uncut posts
+                            # Use full_text to capture uncut posts
                             display_text = getattr(tweet, 'full_text', tweet.text)
                             
                             # Clean out internal short-links that point to attached media
@@ -61,6 +61,15 @@ async def fetch_twitter_data():
                                 display_text = " ".join(cleaned_words)
                                 
                             st.write(display_text)
+                            
+                            # FIX: Fetch and display attached images/media files
+                            if hasattr(tweet, 'media') and tweet.media:
+                                for media_item in tweet.media:
+                                    # Ensure it's a photo/static image before rendering
+                                    if media_item.get('type') == 'photo':
+                                        image_url = media_item.get('media_url_https')
+                                        if image_url:
+                                            st.image(image_url, use_column_width=True)
                             
                 if not valid_tweets_found:
                     st.info(f"No messages posted by @{handle} within the last 3 days.")
