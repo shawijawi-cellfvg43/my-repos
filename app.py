@@ -20,7 +20,7 @@ if st.button("🔄 Force Refresh Now"):
 async def fetch_twitter_data():
     client = Client('en-US')
     
-    # Manually configure the active session using your browser cookies
+    # Configure the active session using browser cookies
     client.set_cookies({
         'auth_token': AUTH_TOKEN,
         'ct0': CT0
@@ -28,11 +28,10 @@ async def fetch_twitter_data():
 
     three_days_ago = datetime.now(timezone.utc) - timedelta(days=3)
 
-    # Automatically split the browser screen width into 3 even columns side-by-side
+    # Split the browser screen width into 3 even columns side-by-side
     cols = st.columns(len(HANDLES))
 
     for i, handle in enumerate(HANDLES):
-        # Direct the content generation stream into its specific horizontal layout column node
         with cols[i]:
             st.markdown(f"### [@{handle}](https://x.com{handle})")
             st.markdown("---")
@@ -48,10 +47,20 @@ async def fetch_twitter_data():
                     
                     if tweet_time >= three_days_ago:
                         valid_tweets_found = True
-                        with st.container(border=True): # Wraps each message post block cleanly
+                        with st.container(border=True):
                             formatted_time = tweet_time.strftime("%b %d, %Y · %I:%M %p UTC")
                             st.caption(f"📅 {formatted_time}")
-                            st.write(tweet.text)
+                            
+                            # FIX: Use 'full_text' instead of '.text' to capture uncut posts
+                            display_text = getattr(tweet, 'full_text', tweet.text)
+                            
+                            # Clean out internal short-links that point to attached media
+                            if "https://t.co" in display_text:
+                                words = display_text.split()
+                                cleaned_words = [w for w in words if not w.startswith("https://t.co")]
+                                display_text = " ".join(cleaned_words)
+                                
+                            st.write(display_text)
                             
                 if not valid_tweets_found:
                     st.info(f"No messages posted by @{handle} within the last 3 days.")
