@@ -1,2 +1,2 @@
-ntscraper
+twikit
 streamlit
