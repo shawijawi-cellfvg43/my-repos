@@ -6,10 +6,9 @@ import asyncio
 # Configurations - Put your 3 exact handles here
 HANDLES = ["MenchOsint", "A7_Mirza", "Suriyakmaps"]
 
-# Backend Dummy Account Login Credentials
-X_USERNAME = "herberdagoat11"
-X_EMAIL = "herbergabe@gmail.com"
-X_PASSWORD = "GABEHERBERGFF(12"
+# Put your raw copied cookie string hashes here
+AUTH_TOKEN = "ca9006ce457aca27df6ed7a39430510804ece86d"
+CT0 = "7d90a0ba62e49984b64248b1a4daeef3ef91aa819b67085ae552ac0a0d8aa82533a745ac26062987a3a24552a324c726aff239226828169ddb5a22716d2c72a7e45d99e744c8b5e1d6fc8a8f3eaf3bec"
 
 st.set_page_config(page_title="Live Feed Dashboard", layout="wide")
 st.title("🔴 Live Account Streams")
@@ -21,16 +20,11 @@ if st.button("🔄 Force Refresh Now"):
 async def fetch_twitter_data():
     client = Client('en-US')
     
-    try:
-        # Twifork routes through the fixed handshake to clear out the KEY_BYTE error barrier
-        await client.login(
-            auth_info_1=X_USERNAME,
-            auth_info_2=X_EMAIL,
-            password=X_PASSWORD
-        )
-    except Exception as login_error:
-        st.error(f"Authentication Failure: {login_error}")
-        return
+    # Manually configure the active session using your browser cookies
+    client.set_cookies({
+        'auth_token': AUTH_TOKEN,
+        'ct0': CT0
+    })
 
     three_days_ago = datetime.now(timezone.utc) - timedelta(days=3)
 
@@ -57,9 +51,9 @@ async def fetch_twitter_data():
                 st.info(f"No messages posted by @{handle} within the last 3 days.")
                 
         except Exception as api_error:
-            st.error(f"Could not load data stream for @{handle}. Error: {api_error}")
+            st.error(f"Could not load data stream for @{handle}. Error Details: {api_error}")
 
-# Run loop wrapper cleanly inside Streamlit's instance container
+# Run loop wrapper inside Streamlit's instance container
 try:
     asyncio.run(fetch_twitter_data())
 except Exception as loop_error:
