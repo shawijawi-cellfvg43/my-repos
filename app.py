@@ -62,14 +62,15 @@ async def fetch_twitter_data():
                                 
                             st.write(display_text)
                             
-                            # FIX: Fetch and display attached images/media files
+                            # FIX: Access Twikit media object attributes directly using dot notation
                             if hasattr(tweet, 'media') and tweet.media:
                                 for media_item in tweet.media:
-                                    # Ensure it's a photo/static image before rendering
-                                    if media_item.get('type') == 'photo':
-                                        image_url = media_item.get('media_url_https')
-                                        if image_url:
-                                            st.image(image_url, use_column_width=True)
+                                    # Target attributes directly to fix the '.get()' argument breakdown
+                                    media_type = getattr(media_item, 'type', None)
+                                    image_url = getattr(media_item, 'media_url_https', None)
+                                    
+                                    if media_type == 'photo' and image_url:
+                                        st.image(image_url, use_container_width=True)
                             
                 if not valid_tweets_found:
                     st.info(f"No messages posted by @{handle} within the last 3 days.")
