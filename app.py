@@ -4,7 +4,7 @@ import time
 
 # Configurations
 API_KEY = "YOUR_API_KEY_HERE"  # Put your free TwitterAPI.io key here
-HANDLES = ["handle1", "handle2", "handle3"]  # Put the 3 exact usernames here
+HANDLES = ["MenchOsint", "A7_Mirza", "Suriyakmaps"]  # Put the 3 exact usernames here
 
 st.set_page_config(page_title="Live Feed Dashboard", layout="wide")
 st.title("🔴 Live Account Streams")
